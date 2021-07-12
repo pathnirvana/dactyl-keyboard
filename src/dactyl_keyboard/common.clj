@@ -36,9 +36,9 @@
 (def sa-profile-key-height 12.7)
 (def choc-profile-key-height 3.5)
 
-(def plate-thickness 5)
-(def mount-width (+ keyswitch-width 3.5))
-(def mount-height (+ keyswitch-height 3.5))
+(def plate-thickness 4) ; makes it easier to up a pcb (was 5)
+(def mount-width (+ keyswitch-width 3.7)) ; give more space around the key (was 3.5)
+(def mount-height (+ keyswitch-height 3.7))
 
 (defn profile-key-height [switch-type] (case switch-type :choc choc-profile-key-height sa-profile-key-height))
 
@@ -245,17 +245,19 @@
         is-right?           (get c :is-right?)
         plate-projection?   (get c :configuration-plate-projection? false)
         fill-in             (translate [0 0 (/ plate-thickness 2)] (cube alps-width alps-height plate-thickness))
-        holder-thickness    1.65
+        holder-thickness    1.75 ; pcb ledge width (was 1.65)
+        holder-width        (+ keyswitch-width (* holder-thickness 2))
+        holder-height       (+ keyswitch-height (* holder-thickness 2))
         top-wall            (case switch-type
                               :alps (->> (cube (+ keyswitch-width 3) 2.7 plate-thickness)
                                          (translate [0
                                                      (+ (/ 2.7 2) (/ alps-height 2))
                                                      (/ plate-thickness 2)]))
-                              :choc (->> (cube (+ keyswitch-width 3.3) holder-thickness (* plate-thickness 0.65))
+                              :choc (->> (cube holder-width holder-thickness (* plate-thickness 0.65))
                                          (translate [0
                                                      (+ (/ holder-thickness 2) (/ keyswitch-height 2))
                                                      (* plate-thickness 0.7)]))
-                              (->> (cube (+ keyswitch-width 3.3) holder-thickness plate-thickness)
+                              (->> (cube holder-width holder-thickness plate-thickness)
                                    (translate [0
                                                (+ (/ holder-thickness 2) (/ keyswitch-height 2))
                                                (/ plate-thickness 2)])))
@@ -269,11 +271,11 @@
                                                             0
                                                             (- plate-thickness
                                                                (/ alps-notch-height 2))])))
-                              :choc (->> (cube holder-thickness (+ keyswitch-height 3.3) (* plate-thickness 0.65))
+                              :choc (->> (cube holder-thickness holder-height (* plate-thickness 0.65))
                                          (translate [(+ (/ holder-thickness 2) (/ keyswitch-width 2))
                                                      0
                                                      (* plate-thickness 0.7)]))
-                              (->> (cube holder-thickness (+ keyswitch-height 3.3) plate-thickness)
+                              (->> (cube holder-thickness holder-height plate-thickness)
                                    (translate [(+ (/ holder-thickness 2) (/ keyswitch-width 2))
                                                0
                                                (/ plate-thickness 2)])))
@@ -406,7 +408,7 @@
               (translate [0 0 (+ 5 plate-thickness)])
               (color [240/255 223/255 175/255 1])))})
 
-(def web-thickness 7)
+(def web-thickness 5) ; thickness of the connections between the key holes
 (def post-size 0.1)
 (def web-post
   (->> (cube post-size post-size web-thickness)

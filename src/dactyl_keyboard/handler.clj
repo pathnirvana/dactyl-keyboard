@@ -34,7 +34,7 @@
   (render-file "manuform.html" {:column-curvature       (range 4 22)
                                 :pinky-column-curvature (range 12 3 -1)
                                 :row-curvature          (range 69 17 -1)
-                                :tenting-angle          (range 15 3 -1)
+                                :tenting-angle          (range 30 3 -1)
                                 ;; :thumb-locations        ["tl" "tr" "ml" "mr" "bl" "br"]
                                 :thumb-tenting          (range -90 100 5)
                                 :rotate-x               (range 36 -36 -1)
