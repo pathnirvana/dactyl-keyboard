@@ -92,6 +92,8 @@
         param-hotswap                     (parse-bool (get p "form.hotswap"))
         param-stagger                     (parse-bool (get p "form.stagger"))
         param-keyboard-z-offset           (parse-int (get p "form.height-offset"))
+        param-web-thickness               (parse-float (get p "form.web-thickness"))
+        param-wall-thickness              (parse-float (get p "form.wall-thickness"))
         param-wide-pinky                  (parse-bool (get p "form.wide-pinky"))
         param-wire-post                   (parse-bool (get p "form.wire-post"))
         param-screw-inserts               (parse-bool (get p "form.screw-inserts"))
@@ -189,6 +191,8 @@
                                            :configuration-stagger-ring                stagger-ring
                                            :configuration-stagger-pinky               stagger-pinky
                                            :configuration-z-offset                    param-keyboard-z-offset
+                                           :configuration-web-thickness               param-web-thickness
+                                           :configuration-wall-thickness              param-wall-thickness
                                            :configuration-show-caps?                  param-show-keycaps
                                            :configuration-use-wide-pinky?             param-wide-pinky
                                            :configuration-use-wire-post?              param-wire-post
@@ -247,6 +251,7 @@
         param-thumb-offset-z      (parse-int (get p "form.thumb-offset-z"))
         param-use-wide-pinky      (parse-bool (get p "form.wide-pinky"))
         param-z-offset            (parse-int (get p "form.z-offset"))
+        param-web-thickness       (parse-float (get p "form.web-thickness"))
         param-manuform-offset     (parse-bool (get p "form.manuform-offset"))
         param-use-border          (parse-bool (get p "form.border"))
         param-thick-wall          (parse-bool (get p "form.thick-wall"))
@@ -284,6 +289,7 @@
                                    :configuration-thumb-offset-y       (if generate-json? param-thumb-offset-y (- 0 param-thumb-offset-y))
                                    :configuration-thumb-offset-z       param-thumb-offset-z
                                    :configuration-z-offset             param-z-offset
+                                   :configuration-web-thickness        param-web-thickness
                                    :configuration-manuform-offset?     param-manuform-offset
                                    :configuration-use-border?          param-use-border
                                    :configuration-thick-wall?          param-thick-wall
@@ -343,7 +349,7 @@
                         :configuration-rotate-x-angle              (/ pi (get curve :rotate-x 15))
 
                         :configuration-use-external-holder?        (get connector :external false)
-                        :configuration-connector-type              (get connector :type :none)
+                        :configuration-connector-type              (keyword (get connector :type "none"))
                         :configuration-use-promicro-usb-hole?      (get connector :micro-usb false)
 
                         :configuration-thumb-cluster-offset-x      (get form :thumb-cluster-offset-x 6)
@@ -365,6 +371,7 @@
                         :configuration-thumb-middle-left-tenting-x (/ pi (get form :thumb-middle-left-tenting-x 10))
                         :configuration-thumb-middle-left-tenting-y (/ pi (get form :thumb-middle-left-tenting-y -4))
                         :configuration-thumb-middle-left-tenting-z (/ pi (get form :thumb-middle-left-tenting-z 10))
+
                         :configuration-thumb-middle-left-offset-x  (get form :thumb-middle-left-offset-x -35)
                         :configuration-thumb-middle-left-offset-y  (get form :thumb-middle-left-offset-y -16)
                         :configuration-thumb-middle-left-offset-z  (get form :thumb-middle-left-offset-z 2)
@@ -378,6 +385,8 @@
                         :configuration-z-offset                    (get form :height-offset 4)
                         :configuration-use-wire-post?              (get form :wire-post false)
                         :configuration-use-screw-inserts?          (get form :screw-inserts false)
+                        :configuration-web-thickness               (get form :web-thickness 7.0)
+                        :configuration-wall-thickness               (get form :wall-thickness 3.0)
 
                         :configuration-show-caps?                  (get misc :keycaps false)
                         :configuration-plate-projection?           (not (get misc :case true))}
@@ -418,6 +427,7 @@
                         :configuration-thumb-offset-z       (get form :thumb-offset-z 27)
                         :configuration-use-wide-pinky?      (get form :wide-pinky false)
                         :configuration-z-offset             (get form :z-offset 10)
+                        :configuration-web-thickness        (get form :web-thickness 7)
                         :configuration-manuform-offset?     (get form :manuform-offset false)
                         :configuration-use-border?          (get form :use-border true)
                         :configuration-thick-wall?          (get form :thick-wall false)

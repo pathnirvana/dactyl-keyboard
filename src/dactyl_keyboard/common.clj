@@ -153,6 +153,7 @@
         tenting-angle     (get c :configuration-tenting-angle)
         switch-type       (get c :configuration-switch-type)
         keyboard-z-offset (get c :configuration-z-offset)
+        web-thickness     (get c :configuration-web-thickness)
         rotate-x-angle    (get c :configuration-rotate-x-angle)
         column-angle      (* beta (- centercol column))
         placed-shape      (->> shape
@@ -410,16 +411,27 @@
 
 (def web-thickness 5) ; thickness of the connections between the key holes
 (def post-size 0.1)
+;; TODO remove the constants once lightcycle has been converted
 (def web-post
+  (->> (cube post-size post-size web-thickness)
+       (translate [0 0 (+ (/ web-thickness -2)
+                          plate-thickness)])))
+(defn web-post [web-thickness]
   (->> (cube post-size post-size web-thickness)
        (translate [0 0 (+ (/ web-thickness -2)
                           plate-thickness)])))
 
 (def post-adj (/ post-size 2))
-(def web-post-tr (translate [(- (/ mount-width 2) post-adj) (- (/ mount-height 2) post-adj) 0] web-post))
-(def web-post-tl (translate [(+ (/ mount-width -2) post-adj) (- (/ mount-height 2) post-adj) 0] web-post))
-(def web-post-bl (translate [(+ (/ mount-width -2) post-adj) (+ (/ mount-height -2) post-adj) 0] web-post))
-(def web-post-br (translate [(- (/ mount-width 2) post-adj) (+ (/ mount-height -2) post-adj) 0] web-post))
+
+;; TODO remove the constants once lightcycle has been converted
+;; (def web-post-tr (translate [(- (/ mount-width 2) post-adj) (- (/ mount-height 2) post-adj) 0] web-post))
+;; (def web-post-tl (translate [(+ (/ mount-width -2) post-adj) (- (/ mount-height 2) post-adj) 0] web-post))
+;; (def web-post-bl (translate [(+ (/ mount-width -2) post-adj) (+ (/ mount-height -2) post-adj) 0] web-post))
+;; (def web-post-br (translate [(- (/ mount-width 2) post-adj) (+ (/ mount-height -2) post-adj) 0] web-post))
+(defn web-post-tr [web-thickness] (translate [(- (/ mount-width 2) post-adj) (- (/ mount-height 2) post-adj) 0] (web-post web-thickness)))
+(defn web-post-tl [web-thickness] (translate [(+ (/ mount-width -2) post-adj) (- (/ mount-height 2) post-adj) 0] (web-post web-thickness)))
+(defn web-post-bl [web-thickness] (translate [(+ (/ mount-width -2) post-adj) (+ (/ mount-height -2) post-adj) 0] (web-post web-thickness)))
+(defn web-post-br [web-thickness] (translate [(- (/ mount-width 2) post-adj) (+ (/ mount-height -2) post-adj) 0] (web-post web-thickness)))
 
 ; length of the first downward-sloping part of the wall (negative)
 (def wall-z-offset -15)
@@ -428,11 +440,21 @@
 ; wall thickness parameter; originally 5
 (def wall-thickness 3)
 
+;; TODO remove those functions once lightcycle has been integrated
 (defn wall-locate1 [dx dy]
   [(* dx wall-thickness) (* dy wall-thickness) -1])
 (defn wall-locate2 [dx dy]
   [(* dx wall-xy-offset) (* dy wall-xy-offset) wall-z-offset])
 (defn wall-locate3 [dx dy]
+  [(* dx (+ wall-xy-offset wall-thickness))
+   (* dy (+ wall-xy-offset wall-thickness))
+   wall-z-offset])
+
+(defn wall-locate1 [wall-thickness dx dy]
+  [(* dx wall-thickness) (* dy wall-thickness) -1])
+(defn wall-locate2 [wall-thickness dx dy]
+  [(* dx wall-xy-offset) (* dy wall-xy-offset) wall-z-offset])
+(defn wall-locate3 [wall-thickness dx dy]
   [(* dx (+ wall-xy-offset wall-thickness))
    (* dy (+ wall-xy-offset wall-thickness))
    wall-z-offset])
@@ -514,12 +536,13 @@
         shift-left  (= column 0)
         shift-up    (and (not (or shift-right shift-left)) (= row 0))
         shift-down  (and (not (or shift-right shift-left)) (>= row lastrow))
+        wall-thickness (get c :configuration-wall-thickness 5)
         position    (if shift-up
-                      (key-position c column row (map + (wall-locate2  0  1) [0 (/ mount-height 2) 0]))
+                      (key-position c column row (map + (wall-locate2 wall-thickness 0  1) [0 (/ mount-height 2) 0]))
                       (if shift-down
-                        (key-position c column row (map - (wall-locate2  0 -1) [0 (/ mount-height 2) 0]))
+                        (key-position c column row (map - (wall-locate2 wall-thickness 0 -1) [0 (/ mount-height 2) 0]))
                         (if shift-left
-                          (map + (left-key-position c row 0) (wall-locate3 -1 0))
-                          (key-position c column row (map + (wall-locate2  1  0) [(/ mount-width 2) 0 0])))))]
+                          (map + (left-key-position c row 0) (wall-locate3 wall-thickness -1 0))
+                          (key-position c column row (map + (wall-locate2 wall-thickness 1  0) [(/ mount-width 2) 0 0])))))]
     (->> (screw-insert-shape bottom-radius top-radius height)
          (translate [(first position) (second position) (/ height 2)]))))
