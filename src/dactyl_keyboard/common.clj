@@ -17,10 +17,10 @@
 
 (def keyswitch-height
   "the y dimension of an mx style keyswitch, in millimeter."
-  14.0)
+  13.9) ; was 14.0 reduced to make a more tighter fit
 (def keyswitch-width
   "the x dimension of an mx style keyswitch, in millimeter."
-  14.0)
+  13.9) ; was 14.0
 
 (def alps-width
   "the x dimension of an alps style keyswitch, in millimeter."
@@ -37,8 +37,8 @@
 (def choc-profile-key-height 3.5)
 
 (def plate-thickness 4) ; makes it easier to up a pcb (was 5)
-(def mount-width (+ keyswitch-width 3.7)) ; give more space around the key (was 3.5)
-(def mount-height (+ keyswitch-height 3.7))
+(def mount-width (+ keyswitch-width 3.5)) ; give more space around the key - reverted
+(def mount-height (+ keyswitch-height 3.5))
 
 (defn profile-key-height [switch-type] (case switch-type :choc choc-profile-key-height sa-profile-key-height))
 
@@ -393,7 +393,23 @@
          (->> key-cap
               (translate [0 0 (+ 5 plate-thickness)])
               (color [127/255 159/255 127/255 1])))
-   1.5 (let [bl2     (/ 18.25 2)
+   1.25 (let [bl2     (/ sa-length 2)
+              bw2     (/ (* sa-length 1.25) 2)
+              tl      (- bw2 3)
+              key-cap (hull (->> (polygon [[bw2 bl2] [bw2 (- bl2)] [(- bw2) (- bl2)] [(- bw2) bl2]])
+                                (extrude-linear {:height    0.1
+                                                 :twist     0
+                                                 :convexity 0})
+                                (translate [0 0 0.05]))
+                           (->> (polygon [[tl 6] [(- tl) 6] [(- tl) -6] [tl -6]])
+                                (extrude-linear {:height    0.1
+                                                 :twist     0
+                                                 :convexity 0})
+                                (translate [0 0 12])))]
+         (->> key-cap
+              (translate [0 0 (+ 5 plate-thickness)])
+              (color [240/255 223/255 175/255 1])))
+  1.5 (let [bl2     (/ 18.25 2)
              bw2     (/ 28 2)
              key-cap (hull (->> (polygon [[bw2 bl2] [bw2 (- bl2)] [(- bw2) (- bl2)] [(- bw2) bl2]])
                                 (extrude-linear {:height    0.1
@@ -409,7 +425,7 @@
               (translate [0 0 (+ 5 plate-thickness)])
               (color [240/255 223/255 175/255 1])))})
 
-(def web-thickness 5) ; thickness of the connections between the key holes
+(def web-thickness 4) ; was 7, thickness of the connections between the key holes; this has to be set to 4 in configuation json as well
 (def post-size 0.1)
 ;; TODO remove the constants once lightcycle has been converted
 (def web-post
